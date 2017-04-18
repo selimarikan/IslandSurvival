@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IslandSurvivalGUI", "Island
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IslandSurvivalDatatypes", "IslandSurvivalDatatypes\IslandSurvivalDatatypes.csproj", "{2778B09F-DC77-42AD-A01B-40ED25A44623}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IslandSurvivalDatatypesTests", "IslandSurvivalDatatypesTests\IslandSurvivalDatatypesTests.csproj", "{48E05F65-901B-4287-9A26-F718EECBC463}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2778B09F-DC77-42AD-A01B-40ED25A44623}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2778B09F-DC77-42AD-A01B-40ED25A44623}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2778B09F-DC77-42AD-A01B-40ED25A44623}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E05F65-901B-4287-9A26-F718EECBC463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E05F65-901B-4287-9A26-F718EECBC463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E05F65-901B-4287-9A26-F718EECBC463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E05F65-901B-4287-9A26-F718EECBC463}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

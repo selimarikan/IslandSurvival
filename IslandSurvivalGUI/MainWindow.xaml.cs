@@ -12,19 +12,14 @@ namespace IslandSurvivalGUI
             DataContext = new IslandSurvivalVM();
             VM.NotificationCommand = new RelayCommand<object>((o) => ShowNotification((string)o));
         }
-
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            VM.MessageCounter++;
-        }
-
-        public IslandSurvivalVM VM => DataContext as IslandSurvivalVM;
-
+         
         private void MessagesPanel_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             VM.MessageCounter++;
             VM.ElapsedHours++;
         }
+
+        public IslandSurvivalVM VM => DataContext as IslandSurvivalVM;
 
         public string NotificationMessage
         {
@@ -48,6 +43,11 @@ namespace IslandSurvivalGUI
                 NotificationMessage = string.Empty;
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
+        }
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            VM.MessageCounter++;
         }
 
         private void TheButton_OnClick(object sender, RoutedEventArgs e)
