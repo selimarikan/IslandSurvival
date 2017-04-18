@@ -1,0 +1,116 @@
+﻿<Window x:Class="IslandSurvivalGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IslandSurvivalGUI"
+        mc:Ignorable="d"
+        UseLayoutRounding="True"
+        Title="Island Survival" 
+        Height="350" Width="525"
+        x:Name="MainGameWindow"
+        Loaded="MainWindow_OnLoaded"
+        Background="AntiqueWhite"
+        Foreground="Sienna"
+        FontFamily="Segoe UI Semibold"
+        FontSize="12">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--Status panel-->
+        <DockPanel
+            Grid.Row="0">
+            <TextBlock 
+                Margin="4"
+                Text="{Binding Path=ElapsedHours, StringFormat=Hours: {0}}"/>
+            
+            <StackPanel 
+                Margin="4"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <TextBlock Text="Location: "/>
+                <TextBlock Text="{Binding CurrentLocation.Name}"/>
+            </StackPanel>
+        </DockPanel>
+        
+        <!--Notification--> 
+        
+        <TextBlock
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Panel.ZIndex="10"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Visibility="Collapsed"
+            FontSize="30"
+            x:Name="NotificationTB"
+            Background="#55555555"
+            TextWrapping="Wrap"
+            FontFamily="Segoe UI"
+            Text="{Binding Path=NotificationMessage, ElementName=MainGameWindow}"/>
+        
+        <!--Menus-->
+        <TabControl
+            x:Name="MenuTabs"
+            Background="Transparent"
+            Grid.Row="1">
+            <!--Overview tab-->
+            <TabItem
+                Visibility="{Binding OverviewTabVisibility}"
+                Header="Overview">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        Grid.Column="0">
+                        <Button 
+                            x:Name="TheButton"
+                            Visibility="{Binding TheButtonVisibility}"
+                            Margin="5"
+                            Click="TheButton_OnClick"
+                            Background="BurlyWood"
+                            Content="{Binding TheButtonText}"/>
+                        
+                        <Button
+                            x:Name="ButtonChopWood"
+                            HorizontalContentAlignment="Stretch"
+                            Click="ButtonChopWood_OnClick"
+                            Visibility="{Binding ButtonChopWoodVisibility}">
+                            <Grid>
+                                <ProgressBar Value="50" HorizontalContentAlignment="Stretch" Foreground="BurlyWood"/>
+                                <TextBlock Text="Collect wood" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </Button>
+
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
+            <!--Supplies tab-->
+            <TabItem
+                Visibility="{Binding SuppliesTabVisibility}"
+                Header="Supplies">
+                <TextBlock 
+                    Text="{Binding InventoryWoodCount, StringFormat=Wood: {0}}"/>
+            </TabItem>
+        </TabControl>
+        
+        <!--Messages panel-->
+        <StackPanel
+            Grid.Row="2"
+            Margin="4"
+            x:Name="MessagesPanel"
+            MouseDown="MessagesPanel_OnMouseDown"
+            Orientation="Horizontal">
+            <TextBlock 
+                FontSize="18"
+                TextWrapping="Wrap"
+                Text="{Binding LastMessage}"/>
+        </StackPanel>
+    </Grid>
+</Window>
