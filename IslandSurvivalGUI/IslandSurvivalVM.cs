@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Media;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using IslandSurvivalDatatypes;
 using IslandSurvivalDatatypes.Items;
 using IslandSurvivalDatatypes.Locations;
 
@@ -18,6 +13,7 @@ namespace IslandSurvivalGUI
         public IslandSurvivalVM()
         {
             TheButtonCommand = new RelayCommand<object>((o) => OnTheButtonClicked());
+            GatherWoodCommand = new RelayCommand<object>((o) => GatherWood());
 
             m_Timer.Interval = 2000;
             m_Timer.Elapsed += M_Timer_Elapsed;
@@ -76,6 +72,15 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty TheButtonCommandProperty =
             DependencyProperty.Register("TheButtonCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
 
+        public ICommand GatherWoodCommand
+        {
+            get { return (ICommand)GetValue(GatherWoodCommandProperty); }
+            set { SetValue(GatherWoodCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GatherWoodCommandProperty =
+            DependencyProperty.Register("GatherWoodCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
+
+
         public Location CurrentLocation
         {
             get { return (Location)GetValue(CurrentLocationProperty); }
@@ -122,7 +127,7 @@ namespace IslandSurvivalGUI
             set { SetValue(ButtonChopWoodProgressProperty, value); }
         }
         public static readonly DependencyProperty ButtonChopWoodProgressProperty =
-            DependencyProperty.Register("ButtonChopWoodProgress", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata(0));
+            DependencyProperty.Register("ButtonChopWoodProgress", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
 
         public string TheButtonText
         {
@@ -189,6 +194,8 @@ namespace IslandSurvivalGUI
             {
                 CurrentLocation.Inventory.RemoveItem<Wood>();
                 NotificationCommand.Execute("You feel warmer.");
+                var soundPlayer = new SoundPlayer("Resources/Audio/Effects/fireCrackle.wav");
+                soundPlayer.Play();
                 // TODO: add game saving here
             }
         }
@@ -210,6 +217,17 @@ namespace IslandSurvivalGUI
             ButtonChopWoodVisibility = Visibility.Visible;
 
             TheButtonText = "Add wood to fire";
+        }
+
+        private void GatherWood()
+        {
+            var soundPlayer = new SoundPlayer("Resources/Audio/Effects/woodChop.wav");
+            soundPlayer.Play();
+
+            var rng = new Random();
+            int gatheredWoodAmount = rng.Next(15) + 5;
+
+            CurrentLocation.Inventory.AddItem<Wood>(gatheredWoodAmount);
         }
     }
 }

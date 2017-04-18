@@ -57,7 +57,7 @@ namespace IslandSurvivalGUI
 
         private void ButtonChopWood_OnClick(object sender, RoutedEventArgs e)
         {
-            
+            VM.GatherWoodCommand.Execute(null);
         }
     }
 }
