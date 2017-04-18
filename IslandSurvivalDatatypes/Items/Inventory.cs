@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IslandSurvivalDatatypes.Items
 {
     public class Inventory : Entity
     {
         public uint Capacity { get; set; }
-        public List<Item> Items { get; set; }
+        public List<Item> Items { get; }
 
         public Inventory()
         {
@@ -24,15 +21,29 @@ namespace IslandSurvivalDatatypes.Items
         public void RemoveItem<T>(int removeCount = 1)
         {
             var tItems = Items.OfType<T>().ToList();
-            if (tItems.Count() >= removeCount)
+            if (tItems.Count() < removeCount)
             {
-                while (removeCount > 0)
-                {
-                    Items.Remove(tItems.ElementAt(0) as Item);
-                    removeCount--;
-                }
+                return;
+            }
+
+            while (removeCount > 0)
+            {
+                Items.Remove(tItems.ElementAt(0) as Item);
+                removeCount--;
             }
         }
 
+        public void AddItem<T>(int addCount = 1) where T : new()
+        {
+            if (!typeof(T).IsSubclassOf(typeof(Item)))
+            {
+                return;
+            }
+
+            for (var iItem = 0; iItem < addCount; iItem++)
+            {
+                Items.Add((new T()) as Item);
+            }
+        }
     }
 }
