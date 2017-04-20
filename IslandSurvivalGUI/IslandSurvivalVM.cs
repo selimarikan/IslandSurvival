@@ -3,6 +3,7 @@ using System.Media;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using IslandSurvivalDatatypes.Buildings;
 using IslandSurvivalDatatypes.Items;
 using IslandSurvivalDatatypes.Locations;
 
@@ -23,14 +24,21 @@ namespace IslandSurvivalGUI
         public void Tick()
         {
             Dispatcher.Invoke(UpdateInventoryVariables);
+            Dispatcher.Invoke(PassTheTime);
         }
 
         private void UpdateInventoryVariables()
         {
             if (CurrentLocation != null)
             {
-                InventoryWoodCount = (int)CurrentLocation.Inventory.GetItemCount<Wood>();
+                InventoryWoodCount = CurrentLocation.Inventory.GetItemCount<Wood>();
+                BuildingCotCount = CurrentLocation.Construction.GetBuildingCount<Cot>();
             }
+        }
+
+        private void PassTheTime()
+        {
+            ElapsedHours++;
         }
 
         private void M_Timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -80,7 +88,6 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty GatherWoodCommandProperty =
             DependencyProperty.Register("GatherWoodCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
 
-
         public Location CurrentLocation
         {
             get { return (Location)GetValue(CurrentLocationProperty); }
@@ -104,6 +111,14 @@ namespace IslandSurvivalGUI
         }
         public static readonly DependencyProperty SuppliesTabVisibilityProperty =
             DependencyProperty.Register("SuppliesTabVisibility", typeof(Visibility), typeof(IslandSurvivalVM), new PropertyMetadata(Visibility.Collapsed));
+
+        public Visibility BuildingsTabVisibility
+        {
+            get { return (Visibility)GetValue(BuildingsTabVisibilityProperty); }
+            set { SetValue(BuildingsTabVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty BuildingsTabVisibilityProperty =
+            DependencyProperty.Register("BuildingsTabVisibility", typeof(Visibility), typeof(IslandSurvivalVM), new PropertyMetadata(Visibility.Collapsed));
 
         public Visibility TheButtonVisibility
         {
@@ -137,13 +152,22 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty TheButtonTextProperty =
             DependencyProperty.Register("TheButtonText", typeof(string), typeof(IslandSurvivalVM), new PropertyMetadata(string.Empty));
 
-        public int InventoryWoodCount
+        public uint InventoryWoodCount
         {
-            get { return (int)GetValue(InventoryWoodCountProperty); }
+            get { return (uint)GetValue(InventoryWoodCountProperty); }
             set { SetValue(InventoryWoodCountProperty, value); }
         }
         public static readonly DependencyProperty InventoryWoodCountProperty =
-            DependencyProperty.Register("InventoryWoodCount", typeof(int), typeof(IslandSurvivalVM), new PropertyMetadata(0));
+            DependencyProperty.Register("InventoryWoodCount", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
+
+        public uint BuildingCotCount
+        {
+            get { return (uint)GetValue(BuildingCotCountProperty); }
+            set { SetValue(BuildingCotCountProperty, value); }
+        }
+        public static readonly DependencyProperty BuildingCotCountProperty =
+            DependencyProperty.Register("BuildingCotCount", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
+
 
         public uint MessageCounter
         {

@@ -7,7 +7,7 @@ namespace IslandSurvivalDatatypes.Locations
         public Shore()
         {
             Inventory.Capacity = 30;
-            CharacterCapacity = 5;
+            Population.Capacity = 5;
             Name = "Shore";
         }
     }

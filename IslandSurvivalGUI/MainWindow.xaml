@@ -86,7 +86,7 @@
                                 <TextBlock Text="Collect wood" HorizontalAlignment="Center"/>
                             </Grid>
                         </Button>
-
+                        
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -97,6 +97,20 @@
                 Header="Supplies">
                 <TextBlock 
                     Text="{Binding InventoryWoodCount, StringFormat=Wood: {0}}"/>
+            </TabItem>
+            
+            <!--Buildings tab-->
+            <TabItem
+                Visibility="{Binding BuildingsTabVisibility}"
+                Header="Buildings">
+                <StackPanel>
+                    <Button
+                        x:Name="ButtonBuildCot">
+                        <TextBlock
+                            Text="{Binding BuildingsCotCount, StringFormat=Build Cot: {0}}"></TextBlock>
+                        </Button>
+                </StackPanel>
+                
             </TabItem>
         </TabControl>
         
