@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace IslandSurvivalDatatypes.Buildings
 {
-    public class Cot : ResidentialBuilding
+    public class WoodenShack : ResidentialBuilding
     {
-        public Cot()
+        public WoodenShack()
         {
-            Capacity = 1;
-            WoodCost = 10;
+            Capacity = 4;
+            WoodCost = 50;
         }
-
     }
 }

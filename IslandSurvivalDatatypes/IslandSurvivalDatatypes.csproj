@@ -44,6 +44,7 @@
     <Compile Include="Buildings\Building.cs" />
     <Compile Include="Buildings\Cot.cs" />
     <Compile Include="Buildings\ResidentialBuilding.cs" />
+    <Compile Include="Buildings\WoodenShack.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Items\Inventory.cs" />
