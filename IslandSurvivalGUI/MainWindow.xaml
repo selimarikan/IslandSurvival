@@ -94,9 +94,16 @@
             <!--Supplies tab-->
             <TabItem
                 Visibility="{Binding SuppliesTabVisibility}"
-                Header="Supplies">
-                <TextBlock 
-                    Text="{Binding InventoryWoodCount, StringFormat=Wood: {0}}"/>
+                Header="Resources">
+                <StackPanel>
+                    <TextBlock 
+                        Text="{Binding InventoryCapacity, StringFormat=Inventory capacity: {0}}"/>
+                    <TextBlock 
+                        Text="{Binding PopulationCapacity, StringFormat=Populaton capacity: {0}}"/>
+                    <TextBlock 
+                        Text="{Binding InventoryWoodCount, StringFormat=Wood: {0}}"/>
+                </StackPanel>
+                
             </TabItem>
             
             <!--Buildings tab-->
@@ -105,9 +112,10 @@
                 Header="Buildings">
                 <StackPanel>
                     <Button
-                        x:Name="ButtonBuildCot">
+                        x:Name="ButtonBuildCot"
+                        Click="ButtonBuildCot_OnClick">
                         <TextBlock
-                            Text="{Binding BuildingsCotCount, StringFormat=Build Cot: {0}}"></TextBlock>
+                            Text="{Binding BuildingCotCount, StringFormat=Build Cot: {0}}"></TextBlock>
                         </Button>
                 </StackPanel>
                 

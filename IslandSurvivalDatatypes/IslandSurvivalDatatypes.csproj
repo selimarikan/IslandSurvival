@@ -45,6 +45,7 @@
     <Compile Include="Buildings\Construction.cs" />
     <Compile Include="Buildings\Cot.cs" />
     <Compile Include="Buildings\ResidentialBuilding.cs" />
+    <Compile Include="Buildings\WarehouseBuilding.cs" />
     <Compile Include="Buildings\WoodenShack.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Population.cs" />

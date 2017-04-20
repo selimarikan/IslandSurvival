@@ -22,7 +22,7 @@ namespace IslandSurvivalDatatypes.Buildings
             return (uint)Buildings.Count(item => item is T);
         }
 
-        public void RemoveBuilding<T>(int removeCount = 1)
+        public void RemoveBuilding<T>(uint removeCount = 1)
         {
             var tBuildings = Buildings.OfType<T>().ToList();
             if (tBuildings.Count() < removeCount)
@@ -32,12 +32,12 @@ namespace IslandSurvivalDatatypes.Buildings
 
             while (removeCount > 0)
             {
-                Buildings.Remove(tBuildings.ElementAt(0) as Building);
+                Buildings.Remove(Buildings.FirstOrDefault(item => item is T));
                 removeCount--;
             }
         }
 
-        public void AddBuilding<T>(int addCount = 1) where T : new()
+        public void AddBuilding<T>(uint addCount = 1) where T : new()
         {
             if (!typeof(T).IsSubclassOf(typeof(Building)))
             {

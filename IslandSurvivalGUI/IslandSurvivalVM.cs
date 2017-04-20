@@ -15,6 +15,7 @@ namespace IslandSurvivalGUI
         {
             TheButtonCommand = new RelayCommand<object>((o) => OnTheButtonClicked());
             GatherWoodCommand = new RelayCommand<object>((o) => GatherWood());
+            BuildCotCommand = new RelayCommand<object>((o) => BuildCot());
 
             m_Timer.Interval = 2000;
             m_Timer.Elapsed += M_Timer_Elapsed;
@@ -31,8 +32,12 @@ namespace IslandSurvivalGUI
         {
             if (CurrentLocation != null)
             {
+                InventoryCapacity = CurrentLocation.Inventory.Capacity;
+                PopulationCapacity = CurrentLocation.Population.Capacity;
                 InventoryWoodCount = CurrentLocation.Inventory.GetItemCount<Wood>();
                 BuildingCotCount = CurrentLocation.Construction.GetBuildingCount<Cot>();
+
+                CurrentLocation.UpdateLocationValues();
             }
         }
 
@@ -87,6 +92,15 @@ namespace IslandSurvivalGUI
         }
         public static readonly DependencyProperty GatherWoodCommandProperty =
             DependencyProperty.Register("GatherWoodCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
+
+        public ICommand BuildCotCommand
+        {
+            get { return (ICommand)GetValue(BuildCotCommandProperty); }
+            set { SetValue(BuildCotCommandProperty, value); }
+        }
+        public static readonly DependencyProperty BuildCotCommandProperty =
+            DependencyProperty.Register("BuildCotCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
+
 
         public Location CurrentLocation
         {
@@ -151,6 +165,22 @@ namespace IslandSurvivalGUI
         }
         public static readonly DependencyProperty TheButtonTextProperty =
             DependencyProperty.Register("TheButtonText", typeof(string), typeof(IslandSurvivalVM), new PropertyMetadata(string.Empty));
+
+        public uint InventoryCapacity
+        {
+            get { return (uint)GetValue(InventoryCapacityProperty); }
+            set { SetValue(InventoryCapacityProperty, value); }
+        }
+        public static readonly DependencyProperty InventoryCapacityProperty =
+            DependencyProperty.Register("InventoryCapacity", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
+
+        public uint PopulationCapacity
+        {
+            get { return (uint)GetValue(PopulationCapacityProperty); }
+            set { SetValue(PopulationCapacityProperty, value); }
+        }
+        public static readonly DependencyProperty PopulationCapacityProperty =
+            DependencyProperty.Register("PopulationCapacity", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
 
         public uint InventoryWoodCount
         {
@@ -239,6 +269,7 @@ namespace IslandSurvivalGUI
             SuppliesTabVisibility = Visibility.Visible;
             TheButtonVisibility = Visibility.Visible;
             ButtonChopWoodVisibility = Visibility.Visible;
+            BuildingsTabVisibility = Visibility.Visible;
 
             TheButtonText = "Add wood to fire";
         }
@@ -249,9 +280,25 @@ namespace IslandSurvivalGUI
             soundPlayer.Play();
 
             var rng = new Random();
-            int gatheredWoodAmount = rng.Next(15) + 5;
+            uint gatheredWoodAmount = (uint)(rng.Next(5) + 5);
 
             CurrentLocation.Inventory.AddItem<Wood>(gatheredWoodAmount);
+        }
+
+        private void BuildCot()
+        {
+            // TODO: Do not create an object to just access its property. 
+            // Making cost static would prevent changing it between different derived types????
+            var cot = new Cot();
+
+            if (CurrentLocation.Inventory.GetItemCount<Wood>() >= cot.WoodCost)
+            {
+                var soundPlayer = new SoundPlayer("Resources/Audio/Effects/buildingHammer.wav");
+                soundPlayer.Play();
+
+                CurrentLocation.Inventory.RemoveItem<Wood>(cot.WoodCost);
+                CurrentLocation.Construction.AddBuilding<Cot>();
+            }
         }
     }
 }

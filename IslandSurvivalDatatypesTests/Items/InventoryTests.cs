@@ -39,18 +39,46 @@ namespace IslandSurvivalDatatypes.Items.Tests
             while (inventory.Items.Count > 0)
             {
                 int number = rng.Next(3);
+                var itemToRemoveCount = rng.Next(5) + 1;
 
                 if (number == 0)
                 {
-                    inventory.RemoveItem<Wood>();
+                    var previousWoodCount = inventory.GetItemCount<Wood>();
+                    if (previousWoodCount >= itemToRemoveCount)
+                    {
+                        inventory.RemoveItem<Wood>((uint)itemToRemoveCount);
+
+                        if (inventory.GetItemCount<Wood>() != (previousWoodCount - (uint)itemToRemoveCount))
+                        {
+                            Assert.Fail();
+                        }
+                    }
                 }
                 else if (number == 1)
                 {
-                    inventory.RemoveItem<Stone>();
+                    var previousStoneCount = inventory.GetItemCount<Stone>();
+                    if (previousStoneCount >= itemToRemoveCount)
+                    {
+                        inventory.RemoveItem<Stone>((uint)itemToRemoveCount);
+
+                        if (inventory.GetItemCount<Stone>() != (previousStoneCount - (uint)itemToRemoveCount))
+                        {
+                            Assert.Fail();
+                        }
+                    }
                 }
                 else
                 {
-                    inventory.RemoveItem<Leather>();
+                    var previousLeatherCount = inventory.GetItemCount<Leather>();
+                    if (previousLeatherCount >= itemToRemoveCount)
+                    {
+                        inventory.RemoveItem<Leather>((uint)itemToRemoveCount);
+
+                        if (inventory.GetItemCount<Leather>() != (previousLeatherCount - (uint)itemToRemoveCount))
+                        {
+                            Assert.Fail();
+                        }
+                    }
                 }
             }
 

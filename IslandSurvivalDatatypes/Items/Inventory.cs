@@ -18,7 +18,7 @@ namespace IslandSurvivalDatatypes.Items
             return (uint)Items.Count(item => item is T);
         }
 
-        public void RemoveItem<T>(int removeCount = 1)
+        public void RemoveItem<T>(uint removeCount = 1)
         {
             var tItems = Items.OfType<T>().ToList();
             if (tItems.Count() < removeCount)
@@ -28,12 +28,12 @@ namespace IslandSurvivalDatatypes.Items
 
             while (removeCount > 0)
             {
-                Items.Remove(tItems.ElementAt(0) as Item);
+                Items.Remove(Items.FirstOrDefault(item => item is T));
                 removeCount--;
             }
         }
 
-        public void AddItem<T>(int addCount = 1) where T : new()
+        public void AddItem<T>(uint addCount = 1) where T : new()
         {
             if (!typeof(T).IsSubclassOf(typeof(Item)))
             {

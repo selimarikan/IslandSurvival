@@ -21,7 +21,7 @@ namespace IslandSurvivalDatatypes.Characters
             return (uint)Characters.Count(item => item is T);
         }
 
-        public void RemoveCharacter<T>(int removeCount = 1)
+        public void RemoveCharacter<T>(uint removeCount = 1)
         {
             var tCharacters = Characters.OfType<T>().ToList();
             if (tCharacters.Count() < removeCount)
@@ -31,12 +31,12 @@ namespace IslandSurvivalDatatypes.Characters
 
             while (removeCount > 0)
             {
-                Characters.Remove(tCharacters.ElementAt(0) as Character);
+                Characters.Remove(Characters.FirstOrDefault(item => item is T));
                 removeCount--;
             }
         }
 
-        public void AddCharacter<T>(int addCount = 1) where T : new()
+        public void AddCharacter<T>(uint addCount = 1) where T : new()
         {
             if (!typeof(T).IsSubclassOf(typeof(Character)))
             {
