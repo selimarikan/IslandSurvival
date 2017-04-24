@@ -64,5 +64,10 @@ namespace IslandSurvivalGUI
         {
             VM.BuildCotCommand.Execute(null);
         }
+
+        private void ButtonGatherStone_OnClick(object sender, RoutedEventArgs e)
+        {
+            VM.GatherStoneCommand.Execute(null);
+        }
     }
 }

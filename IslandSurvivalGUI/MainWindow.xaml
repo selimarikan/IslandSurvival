@@ -25,7 +25,13 @@
             Grid.Row="0">
             <TextBlock 
                 Margin="4"
+                HorizontalAlignment="Left"
                 Text="{Binding Path=ElapsedHours, StringFormat=Hours: {0}}"/>
+            
+            <TextBlock 
+                Margin="4"
+                HorizontalAlignment="Center"
+                Text="{Binding Path=PlayerEnergy, StringFormat=Energy: {0}}"/>
             
             <StackPanel 
                 Margin="4"
@@ -78,15 +84,24 @@
                         
                         <Button
                             x:Name="ButtonChopWood"
-                            HorizontalContentAlignment="Stretch"
+                            Margin="5"
                             Click="ButtonChopWood_OnClick"
                             Visibility="{Binding ButtonChopWoodVisibility}">
                             <Grid>
-                                <ProgressBar Value="50" HorizontalContentAlignment="Stretch" Foreground="BurlyWood"/>
-                                <TextBlock Text="Collect wood" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding InventoryWoodCount, StringFormat=Gather wood ({0})}"/>
                             </Grid>
                         </Button>
-                        
+
+                        <Button
+                            x:Name="ButtonGatherStone"
+                            Margin="5"
+                            Click="ButtonGatherStone_OnClick"
+                            Visibility="{Binding ButtonGatherStoneVisibility}">
+                            <Grid>
+                                <TextBlock Text="{Binding InventoryStoneCount, StringFormat=Gather stone ({0})}"/>
+                            </Grid>
+                        </Button>
+
                     </StackPanel>
                 </Grid>
             </TabItem>

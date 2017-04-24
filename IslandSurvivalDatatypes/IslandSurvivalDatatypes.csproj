@@ -48,6 +48,7 @@
     <Compile Include="Buildings\WarehouseBuilding.cs" />
     <Compile Include="Buildings\WoodenShack.cs" />
     <Compile Include="Characters\Character.cs" />
+    <Compile Include="Characters\Player.cs" />
     <Compile Include="Characters\Population.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Items\Inventory.cs" />

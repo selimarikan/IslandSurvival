@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using IslandSurvivalDatatypes.Buildings;
+using IslandSurvivalDatatypes.Characters;
 using IslandSurvivalDatatypes.Items;
 using IslandSurvivalDatatypes.Locations;
 
@@ -15,7 +16,10 @@ namespace IslandSurvivalGUI
         {
             TheButtonCommand = new RelayCommand<object>((o) => OnTheButtonClicked());
             GatherWoodCommand = new RelayCommand<object>((o) => GatherWood());
+            GatherStoneCommand = new RelayCommand<object>((o) => GatherStone());
             BuildCotCommand = new RelayCommand<object>((o) => BuildCot());
+
+            m_ThePlayer = new Player();
 
             m_Timer.Interval = 2000;
             m_Timer.Elapsed += M_Timer_Elapsed;
@@ -26,6 +30,7 @@ namespace IslandSurvivalGUI
         {
             Dispatcher.Invoke(UpdateInventoryVariables);
             Dispatcher.Invoke(PassTheTime);
+            Dispatcher.Invoke((Action)(() => { m_ThePlayer.Tick(); }));
         }
 
         private void UpdateInventoryVariables()
@@ -35,7 +40,9 @@ namespace IslandSurvivalGUI
                 InventoryCapacity = CurrentLocation.Inventory.Capacity;
                 PopulationCapacity = CurrentLocation.Population.Capacity;
                 InventoryWoodCount = CurrentLocation.Inventory.GetItemCount<Wood>();
+                InventoryStoneCount = CurrentLocation.Inventory.GetItemCount<Stone>();
                 BuildingCotCount = CurrentLocation.Construction.GetBuildingCount<Cot>();
+                PlayerEnergy = m_ThePlayer.Energy;
 
                 CurrentLocation.UpdateLocationValues();
             }
@@ -52,6 +59,7 @@ namespace IslandSurvivalGUI
         }
 
         private readonly Timer m_Timer = new Timer();
+        private Player m_ThePlayer = null;
 
         public uint ElapsedHours
         {
@@ -92,6 +100,15 @@ namespace IslandSurvivalGUI
         }
         public static readonly DependencyProperty GatherWoodCommandProperty =
             DependencyProperty.Register("GatherWoodCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
+
+        public ICommand GatherStoneCommand
+        {
+            get { return (ICommand)GetValue(GatherStoneCommandProperty); }
+            set { SetValue(GatherStoneCommandProperty, value); }
+        }
+        public static readonly DependencyProperty GatherStoneCommandProperty =
+            DependencyProperty.Register("GatherStoneCommand", typeof(ICommand), typeof(IslandSurvivalVM), null);
+
 
         public ICommand BuildCotCommand
         {
@@ -150,13 +167,13 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty ButtonChopWoodVisibilityProperty =
             DependencyProperty.Register("ButtonChopWoodVisibility", typeof(Visibility), typeof(IslandSurvivalVM), new PropertyMetadata(Visibility.Collapsed));
 
-        public uint ButtonChopWoodProgress
+        public Visibility ButtonGatherStoneVisibility
         {
-            get { return (uint)GetValue(ButtonChopWoodProgressProperty); }
-            set { SetValue(ButtonChopWoodProgressProperty, value); }
+            get { return (Visibility)GetValue(ButtonGatherStoneVisibilityProperty); }
+            set { SetValue(ButtonGatherStoneVisibilityProperty, value); }
         }
-        public static readonly DependencyProperty ButtonChopWoodProgressProperty =
-            DependencyProperty.Register("ButtonChopWoodProgress", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
+        public static readonly DependencyProperty ButtonGatherStoneVisibilityProperty =
+            DependencyProperty.Register("ButtonGatherStoneVisibility", typeof(Visibility), typeof(IslandSurvivalVM), new PropertyMetadata(Visibility.Visible));
 
         public string TheButtonText
         {
@@ -165,6 +182,14 @@ namespace IslandSurvivalGUI
         }
         public static readonly DependencyProperty TheButtonTextProperty =
             DependencyProperty.Register("TheButtonText", typeof(string), typeof(IslandSurvivalVM), new PropertyMetadata(string.Empty));
+
+        public double PlayerEnergy
+        {
+            get { return (double)GetValue(PlayerEnergyProperty); }
+            set { SetValue(PlayerEnergyProperty, value); }
+        }
+        public static readonly DependencyProperty PlayerEnergyProperty =
+            DependencyProperty.Register("PlayerEnergy", typeof(double), typeof(IslandSurvivalVM), new PropertyMetadata(50.0));
 
         public uint InventoryCapacity
         {
@@ -190,6 +215,15 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty InventoryWoodCountProperty =
             DependencyProperty.Register("InventoryWoodCount", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
 
+        public uint InventoryStoneCount
+        {
+            get { return (uint)GetValue(InventoryStoneCountProperty); }
+            set { SetValue(InventoryStoneCountProperty, value); }
+        }
+        public static readonly DependencyProperty InventoryStoneCountProperty =
+            DependencyProperty.Register("InventoryStoneCount", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
+
+
         public uint BuildingCotCount
         {
             get { return (uint)GetValue(BuildingCotCountProperty); }
@@ -198,15 +232,18 @@ namespace IslandSurvivalGUI
         public static readonly DependencyProperty BuildingCotCountProperty =
             DependencyProperty.Register("BuildingCotCount", typeof(uint), typeof(IslandSurvivalVM), new PropertyMetadata((uint)0));
 
-
         public uint MessageCounter
         {
             get { return (uint)GetValue(MessageCounterProperty); }
             set { SetValue(MessageCounterProperty, value); }
         }
+
+       
+
         public static readonly DependencyProperty MessageCounterProperty =
             DependencyProperty.Register("MessageCounter", typeof(uint), typeof(IslandSurvivalVM), new UIPropertyMetadata((uint)0, OnMessageCounterChanged));
 
+        // Handle these as quests or tasks
         private static void OnMessageCounterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is IslandSurvivalVM)
@@ -217,6 +254,8 @@ namespace IslandSurvivalGUI
                 {
                     case 1:
                         VM.LastMessage = "You wake up on a shore, tired, wet and thirsty.";
+                        VM.m_ThePlayer.Health = 45;
+                        VM.m_ThePlayer.Energy = 50;
                         break;
 
                     case 2:
@@ -236,6 +275,7 @@ namespace IslandSurvivalGUI
                         VM.LastMessage = string.Empty;
                         break;
 
+
                     default:
                         break;
                 }
@@ -248,8 +288,9 @@ namespace IslandSurvivalGUI
             {
                 CurrentLocation.Inventory.RemoveItem<Wood>();
                 NotificationCommand.Execute("You feel warmer.");
-                var soundPlayer = new SoundPlayer("Resources/Audio/Effects/fireCrackle.wav");
-                soundPlayer.Play();
+                SoundController.PlayEffect(SoundEffects.FireCrack);
+                m_ThePlayer.Energy += 0.5;
+
                 // TODO: add game saving here
             }
         }
@@ -274,15 +315,37 @@ namespace IslandSurvivalGUI
             TheButtonText = "Add wood to fire";
         }
 
+        // Make them "Action"
         private void GatherWood()
         {
-            var soundPlayer = new SoundPlayer("Resources/Audio/Effects/woodChop.wav");
-            soundPlayer.Play();
+            if (m_ThePlayer.Energy < 2)
+            {
+                return;
+            }
 
+            m_ThePlayer.Energy -= 2;
             var rng = new Random();
-            uint gatheredWoodAmount = (uint)(rng.Next(5) + 5);
+            uint gatheredWoodAmount = (uint)(rng.Next(5) + 2);
 
             CurrentLocation.Inventory.AddItem<Wood>(gatheredWoodAmount);
+
+            SoundController.PlayEffect(SoundEffects.ChopWood);
+        }
+
+        // Make them "Action"
+        private void GatherStone()
+        {
+            if (m_ThePlayer.Energy < 2)
+            {
+                return;
+            }
+
+            m_ThePlayer.Energy -= 2;
+            var rng = new Random();
+            uint gatheredStoneAmount = (uint)(rng.Next(2) + 1);
+
+            CurrentLocation.Inventory.AddItem<Stone>(gatheredStoneAmount);
+            SoundController.PlayEffect(SoundEffects.StoneCollect);
         }
 
         private void BuildCot()
@@ -293,12 +356,11 @@ namespace IslandSurvivalGUI
 
             if (CurrentLocation.Inventory.GetItemCount<Wood>() >= cot.WoodCost)
             {
-                var soundPlayer = new SoundPlayer("Resources/Audio/Effects/buildingHammer.wav");
-                soundPlayer.Play();
-
+                SoundController.PlayEffect(SoundEffects.Build);
                 CurrentLocation.Inventory.RemoveItem<Wood>(cot.WoodCost);
                 CurrentLocation.Construction.AddBuilding<Cot>();
             }
         }
+
     }
 }
